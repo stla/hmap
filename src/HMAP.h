@@ -23,11 +23,10 @@ class HMAP {
   //   }
   // }
   
-  Rcpp::RObject at2(std::string key) {
+  Rcpp::RObject at_unsafe(std::string key) {
     return hmap.at(key);
   }
     
-  
   bool has_key(std::string key) { return hmap.find(key) != hmap.end(); }
 
   Rcpp::StringVector keys() {
@@ -68,16 +67,22 @@ class HMAP {
     return out;
   }
 
-  bool insert(std::string key, Rcpp::RObject value) {
-    std::pair<hmapR::iterator, bool> x = hmap.emplace(key, value);
-    return x.second;
+  void insert(std::string key, Rcpp::RObject value) {
+    hmap.emplace(key, value);
   }
 
-  bool assign(std::string key, Rcpp::RObject value) {
-    std::pair<hmapR::iterator, bool> x = hmap.insert_or_assign(key, value);
-    return x.second;
+  void assign(std::string key, Rcpp::RObject value) {
+    hmap.insert_or_assign(key, value);
   }
 
+  bool insert_with_info(std::string key, Rcpp::RObject value) {
+    return hmap.emplace(key, value).second;
+  }
+  
+  bool assign_with_info(std::string key, Rcpp::RObject value) {
+    return hmap.insert_or_assign(key, value).second;
+  }
+  
   void erase(std::string key) {
     hmap.erase(key);
   }
@@ -104,6 +109,16 @@ class HMAP {
     return out;  // new umapR(submap), true);
   }
 
+  Rcpp::XPtr<hmapR> extract_unsafe(Rcpp::StringVector keys) {
+    hmapR submap;
+    for(Rcpp::String key : keys) {
+        submap.emplace(key, hmap.at(key));
+    }
+    hmapR* submapptr(new hmapR(submap));
+    Rcpp::XPtr<hmapR> out = Rcpp::XPtr<hmapR>(submapptr, false);
+    return out;
+  }
+  
   void extract_inplace(Rcpp::StringVector keys) {
     hmapR submap;
     for(Rcpp::String key : keys) {
@@ -115,6 +130,14 @@ class HMAP {
     hmap = submap;
   }
 
+  void extract_inplace_unsafe(Rcpp::StringVector keys) {
+    hmapR submap;
+    for(Rcpp::String key : keys) {
+        submap.emplace(key, hmap.at(key));
+    }
+    hmap = submap;
+  }
+  
   Rcpp::XPtr<hmapR> extract_by_erasing(Rcpp::StringVector keys) {
     hmapR* submapptr = new hmapR(hmap);
     hmapR submap = *submapptr;
