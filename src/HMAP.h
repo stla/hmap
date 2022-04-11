@@ -14,7 +14,7 @@ class HMAP {
 
   unsigned size() { return hmap.size(); }
 
-  // Rcpp::List at(std::string key) {
+  // Rcpp::List at(Rcpp::String key) {
   //   umapR::iterator it = umap.find(key);
   //   if(it != umap.end()) {
   //     return Just(it->second);
@@ -23,11 +23,11 @@ class HMAP {
   //   }
   // }
   
-  Rcpp::RObject at_unsafe(std::string key) {
+  Rcpp::RObject at_unsafe(Rcpp::String key) {
     return hmap.at(key);
   }
     
-  bool has_key(std::string key) { return hmap.find(key) != hmap.end(); }
+  bool has_key(Rcpp::String key) { return hmap.find(key) != hmap.end(); }
 
   Rcpp::StringVector keys() {
     const unsigned s = hmap.size();
@@ -67,23 +67,23 @@ class HMAP {
     return out;
   }
 
-  void insert(std::string key, Rcpp::RObject value) {
+  void insert(Rcpp::String key, Rcpp::RObject value) {
     hmap.emplace(key, value);
   }
 
-  void assign(std::string key, Rcpp::RObject value) {
+  void assign(Rcpp::String key, Rcpp::RObject value) {
     hmap.insert_or_assign(key, value);
   }
 
-  bool insert_with_info(std::string key, Rcpp::RObject value) {
+  bool insert_with_info(Rcpp::String key, Rcpp::RObject value) {
     return hmap.emplace(key, value).second;
   }
   
-  bool assign_with_info(std::string key, Rcpp::RObject value) {
+  bool assign_with_info(Rcpp::String key, Rcpp::RObject value) {
     return hmap.insert_or_assign(key, value).second;
   }
   
-  void erase(std::string key) {
+  void erase(Rcpp::String key) {
     hmap.erase(key);
   }
 
