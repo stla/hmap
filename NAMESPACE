@@ -1,0 +1,4 @@
+useDynLib(hmap, .registration=TRUE)
+importFrom(Rcpp, evalCpp)
+importFrom(Rcpp, setRcppClass)
+exportPattern("^[[:alpha:]]+")
